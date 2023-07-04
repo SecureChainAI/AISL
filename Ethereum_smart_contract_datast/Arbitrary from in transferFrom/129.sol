@@ -1,0 +1,1 @@
+ require(ctuContract.transferFrom(_from, _to, amount));

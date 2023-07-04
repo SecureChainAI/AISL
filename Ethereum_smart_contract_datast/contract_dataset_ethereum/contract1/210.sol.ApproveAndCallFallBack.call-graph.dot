@@ -1,0 +1,8 @@
+strict digraph {
+subgraph cluster_175_ApproveAndCallFallBack {
+label = "ApproveAndCallFallBack"
+"175_receiveApproval" [label="receiveApproval"]
+}subgraph cluster_solidity {
+label = "[Solidity]"
+}
+}

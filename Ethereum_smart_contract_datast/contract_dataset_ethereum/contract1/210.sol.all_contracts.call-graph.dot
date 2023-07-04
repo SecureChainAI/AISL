@@ -1,0 +1,54 @@
+strict digraph {
+subgraph cluster_96_SafeMath {
+label = "SafeMath"
+"96_safeSub" [label="safeSub"]
+"96_safeMul" [label="safeMul"]
+"96_safeDiv" [label="safeDiv"]
+"96_safeAdd" [label="safeAdd"]
+}subgraph cluster_163_ERC20Interface {
+label = "ERC20Interface"
+"163_totalSupply" [label="totalSupply"]
+"163_approve" [label="approve"]
+"163_transferFrom" [label="transferFrom"]
+"163_allowance" [label="allowance"]
+"163_transfer" [label="transfer"]
+"163_balanceOf" [label="balanceOf"]
+}subgraph cluster_175_ApproveAndCallFallBack {
+label = "ApproveAndCallFallBack"
+"175_receiveApproval" [label="receiveApproval"]
+}subgraph cluster_244_Owned {
+label = "Owned"
+"244_Owned" [label="Owned"]
+"244_acceptOwnership" [label="acceptOwnership"]
+"244_transferOwnership" [label="transferOwnership"]
+"244_transferOwnership" -> "244_onlyOwner"
+}subgraph cluster_543_AquaToken {
+label = "AquaToken"
+"543_transferFrom" [label="transferFrom"]
+"543_transfer" [label="transfer"]
+"543_allowance" [label="allowance"]
+"543_totalSupply" [label="totalSupply"]
+"543_transferAnyERC20Token" [label="transferAnyERC20Token"]
+"543_approveAndCall" [label="approveAndCall"]
+"543_balanceOf" [label="balanceOf"]
+"543_AquaToken" [label="AquaToken"]
+"543_fallback" [label="fallback"]
+"543_approve" [label="approve"]
+"543_transferAnyERC20Token" -> "543_onlyOwner"
+"543_transferFrom" -> "543_safeSub"
+"543_transfer" -> "543_safeAdd"
+"543_transferFrom" -> "543_safeAdd"
+"543_transfer" -> "543_safeSub"
+}subgraph cluster_solidity {
+label = "[Solidity]"
+"require(bool)" 
+"revert()" 
+"244_acceptOwnership" -> "require(bool)"
+"96_safeDiv" -> "require(bool)"
+"96_safeSub" -> "require(bool)"
+"96_safeMul" -> "require(bool)"
+"543_fallback" -> "revert()"
+"96_safeAdd" -> "require(bool)"
+}"543_transferAnyERC20Token" -> "163_transfer"
+"543_approveAndCall" -> "175_receiveApproval"
+}
