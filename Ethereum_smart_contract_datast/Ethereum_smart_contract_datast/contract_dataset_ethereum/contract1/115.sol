@@ -1,32 +1,37 @@
 pragma solidity ^0.4.23;
 
-
 contract ERC20Basic {
     function totalSupply() public view returns (uint256);
+
     function balanceOf(address who) public view returns (uint256);
+
     function transfer(address to, uint256 value) public returns (bool);
+
     event Transfer(address indexed from, address indexed to, uint256 value);
 }
 
 contract ERC20 is ERC20Basic {
-    function allowance(address owner, address spender)
-        public view returns (uint256);
+    function allowance(
+        address owner,
+        address spender
+    ) public view returns (uint256);
 
-    function transferFrom(address from, address to, uint256 value)
-        public returns (bool);
+    function transferFrom(
+        address from,
+        address to,
+        uint256 value
+    ) public returns (bool);
 
     function approve(address spender, uint256 value) public returns (bool);
+
     event Approval(
-    address indexed owner,
-    address indexed spender,
-    uint256 value
+        address indexed owner,
+        address indexed spender,
+        uint256 value
     );
 }
 
-
-
 library SafeMath {
-
     function mul(uint256 a, uint256 b) internal pure returns (uint256 c) {
         if (a == 0) {
             return 0;
@@ -52,8 +57,6 @@ library SafeMath {
     }
 }
 
-
-
 contract BasicToken is ERC20Basic {
     using SafeMath for uint256;
 
@@ -74,21 +77,19 @@ contract BasicToken is ERC20Basic {
         emit Transfer(msg.sender, _to, _value);
         return true;
     }
-  
+
     function balanceOf(address _owner) public view returns (uint256) {
         return balances[_owner];
     }
-
 }
 
 contract BurnableToken is BasicToken {
-
     event Burn(address indexed burner, uint256 value);
 
-  /**
-   * @dev Burns a specific amount of tokens.
-   * @param _value The amount of token to be burned.
-   */
+    /**
+     * @dev Burns a specific amount of tokens.
+     * @param _value The amount of token to be burned.
+     */
     function burn(uint256 _value) public {
         _burn(msg.sender, _value);
     }
@@ -104,17 +105,13 @@ contract BurnableToken is BasicToken {
 }
 
 contract StandardToken is ERC20, BasicToken {
-
-    mapping (address => mapping (address => uint256)) internal allowed;
+    mapping(address => mapping(address => uint256)) internal allowed;
 
     function transferFrom(
         address _from,
         address _to,
         uint256 _value
-    )
-        public
-        returns (bool)
-    {
+    ) public returns (bool) {
         require(_to != address(0));
         require(_value <= balances[_from]);
         require(_value <= allowed[_from][msg.sender]);
@@ -126,47 +123,34 @@ contract StandardToken is ERC20, BasicToken {
         return true;
     }
 
-
     function approve(address _spender, uint256 _value) public returns (bool) {
         allowed[msg.sender][_spender] = _value;
         emit Approval(msg.sender, _spender, _value);
         return true;
     }
 
-
     function allowance(
         address _owner,
         address _spender
-    )
-    public
-    view
-    returns (uint256)
-    {
+    ) public view returns (uint256) {
         return allowed[_owner][_spender];
     }
-
 
     function increaseApproval(
         address _spender,
         uint _addedValue
-    )
-    public
-    returns (bool)
-    {
+    ) public returns (bool) {
         allowed[msg.sender][_spender] = (
-        allowed[msg.sender][_spender].add(_addedValue));
+            allowed[msg.sender][_spender].add(_addedValue)
+        );
         emit Approval(msg.sender, _spender, allowed[msg.sender][_spender]);
         return true;
     }
 
-
     function decreaseApproval(
         address _spender,
         uint _subtractedValue
-    )
-        public
-        returns (bool)
-    {
+    ) public returns (bool) {
         uint oldValue = allowed[msg.sender][_spender];
         if (_subtractedValue > oldValue) {
             allowed[msg.sender][_spender] = 0;
@@ -176,9 +160,7 @@ contract StandardToken is ERC20, BasicToken {
         emit Approval(msg.sender, _spender, allowed[msg.sender][_spender]);
         return true;
     }
-
 }
-
 
 contract NRXtoken is StandardToken, BurnableToken {
     string public constant name = "Neironix";
@@ -193,37 +175,50 @@ contract NRXtoken is StandardToken, BurnableToken {
     constructor(address _CrowdsaleAddress) public {
         CrowdsaleAddress = _CrowdsaleAddress;
         totalSupply_ = INITIAL_SUPPLY;
-        balances[msg.sender] = INITIAL_SUPPLY;      
+        balances[msg.sender] = INITIAL_SUPPLY;
     }
-  
+
     modifier onlyOwner() {
         // only Crowdsale contract
         require(msg.sender == CrowdsaleAddress);
         _;
     }
 
-     // Override
-    function transfer(address _to, uint256 _value) public returns(bool){
-        if (msg.sender != CrowdsaleAddress){
-            require(!lockTransfers, "Transfers are prohibited in Crowdsale period");
+    // Override
+    function transfer(address _to, uint256 _value) public returns (bool) {
+        if (msg.sender != CrowdsaleAddress) {
+            require(
+                !lockTransfers,
+                "Transfers are prohibited in Crowdsale period"
+            );
         }
-        return super.transfer(_to,_value);
+        return super.transfer(_to, _value);
     }
 
-     // Override
-    function transferFrom(address _from, address _to, uint256 _value) public returns(bool){
-        if (msg.sender != CrowdsaleAddress){
-            require(!lockTransfers, "Transfers are prohibited in Crowdsale period");
+    // Override
+    function transferFrom(
+        address _from,
+        address _to,
+        uint256 _value
+    ) public returns (bool) {
+        if (msg.sender != CrowdsaleAddress) {
+            require(
+                !lockTransfers,
+                "Transfers are prohibited in Crowdsale period"
+            );
         }
-        return super.transferFrom(_from,_to,_value);
+        return super.transferFrom(_from, _to, _value);
     }
 
     /**
      * @dev function accept tokens from users as a payment for servises and burn their
      * @dev can run only from crowdsale contract
-    */
-    function acceptTokens(address _from, uint256 _value) public onlyOwner returns (bool){
-        require (balances[_from] >= _value);
+     */
+    function acceptTokens(
+        address _from,
+        uint256 _value
+    ) public onlyOwner returns (bool) {
+        require(balances[_from] >= _value);
         balances[_from] = balances[_from].sub(_value);
         totalSupply_ = totalSupply_.sub(_value);
         emit AcceptToken(_from, _value);
@@ -233,23 +228,24 @@ contract NRXtoken is StandardToken, BurnableToken {
     /**
      * @dev function transfer tokens from special address to users
      * @dev can run only from crowdsale contract
-    */
-    function transferTokensFromSpecialAddress(address _from, address _to, uint256 _value) public onlyOwner returns (bool){
-        require (balances[_from] >= _value);
+     */
+    function transferTokensFromSpecialAddress(
+        address _from,
+        address _to,
+        uint256 _value
+    ) public onlyOwner returns (bool) {
+        require(balances[_from] >= _value);
         balances[_from] = balances[_from].sub(_value);
         balances[_to] = balances[_to].add(_value);
         emit Transfer(_from, _to, _value);
         return true;
     }
 
-
     function lockTransfer(bool _lock) public onlyOwner {
         lockTransfers = _lock;
     }
 
-
-
     function() external payable {
         revert("The token contract don`t receive ether");
-    }  
+    }
 }

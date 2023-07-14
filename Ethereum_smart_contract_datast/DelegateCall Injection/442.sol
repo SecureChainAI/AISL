@@ -1,0 +1,1 @@
+function kill() onlyOwner public { selfdestruct(owner); }

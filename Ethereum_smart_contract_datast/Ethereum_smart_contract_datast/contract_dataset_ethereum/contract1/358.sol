@@ -1,7 +1,3 @@
-/**
- * Copyright (C) 2017-2018 Hashfuture Inc. All rights reserved.
- */
-
 pragma solidity ^0.4.22;
 
 library strings {

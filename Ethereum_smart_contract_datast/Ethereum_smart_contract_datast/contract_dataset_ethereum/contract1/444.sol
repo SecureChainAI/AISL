@@ -45,16 +45,38 @@ library SafeMath {
  * @dev The standard ERC20 Token contract base.
  */
 contract ERC20Token {
-    uint256 public totalSupply;  /* shorthand for public function and a property */
-    
+    uint256
+        public totalSupply; /* shorthand for public function and a property */
+
     function balanceOf(address _owner) public view returns (uint256 balance);
-    function transfer(address _to, uint256 _value) public returns (bool success);
-    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success);
-    function approve(address _spender, uint256 _value) public returns (bool success);
-    function allowance(address _owner, address _spender) public view returns (uint256 remaining);
+
+    function transfer(
+        address _to,
+        uint256 _value
+    ) public returns (bool success);
+
+    function transferFrom(
+        address _from,
+        address _to,
+        uint256 _value
+    ) public returns (bool success);
+
+    function approve(
+        address _spender,
+        uint256 _value
+    ) public returns (bool success);
+
+    function allowance(
+        address _owner,
+        address _spender
+    ) public view returns (uint256 remaining);
 
     event Transfer(address indexed _from, address indexed _to, uint256 _value);
-    event Approval(address indexed _owner, address indexed _spender, uint256 _value);
+    event Approval(
+        address indexed _owner,
+        address indexed _spender,
+        uint256 _value
+    );
 }
 
 // File: contracts/token/StandardToken.sol
@@ -70,10 +92,10 @@ contract StandardToken is ERC20Token {
     string public name;
     string public symbol;
     uint8 public decimals;
-    
-    mapping (address => uint256) balances;
-    mapping (address => mapping (address => uint256)) internal allowed;
-    
+
+    mapping(address => uint256) balances;
+    mapping(address => mapping(address => uint256)) internal allowed;
+
     /**
      * @dev The constructor assigns the token name, symbols and decimals.
      */
@@ -102,14 +124,17 @@ contract StandardToken is ERC20Token {
      *
      * @return The number of tokens available to `_spender` to be spent.
      */
-    function allowance(address _owner, address _spender) public view returns (uint256 remaining) {
+    function allowance(
+        address _owner,
+        address _spender
+    ) public view returns (uint256 remaining) {
         return allowed[_owner][_spender];
     }
 
     /**
      * @dev Give permission to `_spender` to spend `_value` number of tokens on your behalf.
-     * E.g. You place a buy or sell order on an exchange and in that example, the 
-     * `_spender` address is the address of the contract the exchange created to add your token to their 
+     * E.g. You place a buy or sell order on an exchange and in that example, the
+     * `_spender` address is the address of the contract the exchange created to add your token to their
      * website and you are `msg.sender`.
      *
      * @param _spender The address which will spend the funds.
@@ -146,9 +171,13 @@ contract StandardToken is ERC20Token {
      *
      * @return Whether the transfer was successful or not.
      */
-    function transferFrom(address _from, address _to, uint256 _value) public returns (bool) {
+    function transferFrom(
+        address _from,
+        address _to,
+        uint256 _value
+    ) public returns (bool) {
         require(_value <= allowed[_from][msg.sender]);
-        
+
         allowed[_from][msg.sender] = allowed[_from][msg.sender].minus(_value);
         executeTransfer(_from, _to, _value);
 
@@ -158,10 +187,14 @@ contract StandardToken is ERC20Token {
     /**
      * @dev Internal function that this reused by the transfer functions
      */
-    function executeTransfer(address _from, address _to, uint256 _value) internal {
+    function executeTransfer(
+        address _from,
+        address _to,
+        uint256 _value
+    ) internal {
         require(_to != address(0));
         require(_value != 0 && _value <= balances[_from]);
-        
+
         balances[_from] = balances[_from].minus(_value);
         balances[_to] = balances[_to].plus(_value);
 
@@ -212,12 +245,12 @@ contract MintableToken is StandardToken {
     }
 
     /**
-    * @dev Creates new `_value` number of tokens and sends them to the `_to` address.
-    *
-    * @param _to The address which will receive the freshly minted tokens.
-    * @param _value The number of tokens that will be created.
-    */
-    function mint(address _to, uint256 _value) onlyMinter canMint public {
+     * @dev Creates new `_value` number of tokens and sends them to the `_to` address.
+     *
+     * @param _to The address which will receive the freshly minted tokens.
+     * @param _value The number of tokens that will be created.
+     */
+    function mint(address _to, uint256 _value) public onlyMinter canMint {
         totalSupply = totalSupply.plus(_value);
         balances[_to] = balances[_to].plus(_value);
 
@@ -225,13 +258,13 @@ contract MintableToken is StandardToken {
     }
 
     /**
-    * @dev Disable the minting of new tokens. Cannot be reversed.
-    *
-    * @return Whether or not the process was successful.
-    */
-    function disableMinting() onlyMinter canMint public {
+     * @dev Disable the minting of new tokens. Cannot be reversed.
+     *
+     * @return Whether or not the process was successful.
+     */
+    function disableMinting() public onlyMinter canMint {
         mintingDisabled = true;
-       
+
         emit MintingDisabled();
     }
 }
@@ -294,10 +327,10 @@ contract HasOwner {
         owner = _owner;
     }
 
-    /** 
+    /**
      * @dev Access control modifier that allows only the current owner to call the function.
      */
-    modifier onlyOwner {
+    modifier onlyOwner() {
         require(msg.sender == owner);
         _;
     }
@@ -308,7 +341,10 @@ contract HasOwner {
      * @param _oldOwner The address of the previous owner.
      * @param _newOwner The address of the new owner.
      */
-    event OwnershipTransfer(address indexed _oldOwner, address indexed _newOwner);
+    event OwnershipTransfer(
+        address indexed _oldOwner,
+        address indexed _newOwner
+    );
 
     /**
      * @dev Transfering the ownership is a two-step process, as we prepare
@@ -321,7 +357,7 @@ contract HasOwner {
     function transferOwnership(address _newOwner) public onlyOwner {
         newOwner = _newOwner;
     }
- 
+
     /**
      * @dev The `newOwner` finishes the ownership transfer process by accepting the
      * ownership.
@@ -343,7 +379,6 @@ contract HasOwner {
  * @dev Allows you to pause/unpause transfers of your token.
  **/
 contract PausableToken is StandardToken, HasOwner {
-
     /// Indicates whether the token contract is paused or not.
     bool public paused = false;
 
@@ -368,7 +403,7 @@ contract PausableToken is StandardToken, HasOwner {
     /**
      * @dev Pauses the token contract.
      */
-    function pause() onlyOwner whenNotPaused public {
+    function pause() public onlyOwner whenNotPaused {
         paused = true;
         emit Pause();
     }
@@ -376,7 +411,7 @@ contract PausableToken is StandardToken, HasOwner {
     /**
      * @dev Unpauses the token contract.
      */
-    function unpause() onlyOwner public {
+    function unpause() public onlyOwner {
         require(paused);
 
         paused = false;
@@ -385,15 +420,25 @@ contract PausableToken is StandardToken, HasOwner {
 
     /// Overrides of the standard token's functions to add the paused/unpaused functionality.
 
-    function transfer(address _to, uint256 _value) public whenNotPaused returns (bool) {
+    function transfer(
+        address _to,
+        uint256 _value
+    ) public whenNotPaused returns (bool) {
         return super.transfer(_to, _value);
     }
 
-    function approve(address _spender, uint256 _value) public whenNotPaused returns (bool) {
+    function approve(
+        address _spender,
+        uint256 _value
+    ) public whenNotPaused returns (bool) {
         return super.approve(_spender, _value);
     }
 
-    function transferFrom(address _from, address _to, uint256 _value) public whenNotPaused returns (bool) {
+    function transferFrom(
+        address _from,
+        address _to,
+        uint256 _value
+    ) public whenNotPaused returns (bool) {
         return super.transferFrom(_from, _to, _value);
     }
 }
@@ -413,14 +458,12 @@ contract AbstractFundraiser {
      */
     event FundsReceived(address indexed _address, uint _ethers, uint _tokens);
 
-
     /**
      * @dev The initialization method for the token
      *
      * @param _token The address of the token of the fundraiser
      */
-    function initializeFundraiserToken(address _token) internal
-    {
+    function initializeFundraiserToken(address _token) internal {
         token = ERC20Token(_token);
     }
 
@@ -450,12 +493,12 @@ contract AbstractFundraiser {
      * @param _amount The amount of received funds in ether.
      */
     function receiveFunds(address _address, uint256 _amount) internal;
-    
+
     /**
      * @dev It throws an exception if the transaction does not meet the preconditions.
      */
     function validateTransaction() internal view;
-    
+
     /**
      * @dev this overridable function makes and handles tokens to buyers
      */
@@ -465,7 +508,6 @@ contract AbstractFundraiser {
      * @dev this overridable function forwards the funds (if necessary) to a vault or directly to the beneficiary
      */
     function handleFunds(address _address, uint256 _ethers) internal;
-
 }
 
 // File: contracts/fundraiser/BasicFundraiser.sol
@@ -473,7 +515,7 @@ contract AbstractFundraiser {
 /**
  * @title Basic Fundraiser
  *
- * @dev An abstract contract that is a base for fundraisers. 
+ * @dev An abstract contract that is a base for fundraisers.
  * It implements a generic procedure for handling received funds:
  * 1. Validates the transaciton preconditions
  * 2. Calculates the amount of tokens based on the conversion rate.
@@ -485,7 +527,7 @@ contract BasicFundraiser is HasOwner, AbstractFundraiser {
     using SafeMath for uint256;
 
     // The number of decimals for the token.
-    uint8 constant DECIMALS = 18;  // Enforced
+    uint8 constant DECIMALS = 18; // Enforced
 
     // Decimal factor for multiplication purposes.
     uint256 constant DECIMALS_FACTOR = 10 ** uint256(DECIMALS);
@@ -526,9 +568,7 @@ contract BasicFundraiser is HasOwner, AbstractFundraiser {
         uint256 _endTime,
         uint256 _conversionRate,
         address _beneficiary
-    )
-        internal
-    {
+    ) internal {
         require(_endTime >= _startTime);
         require(_conversionRate > 0);
         require(_beneficiary != address(0));
@@ -592,7 +632,9 @@ contract BasicFundraiser is HasOwner, AbstractFundraiser {
     /**
      * @dev this overridable function that calculates the tokens based on the ether amount
      */
-    function calculateTokens(uint256 _amount) internal view returns(uint256 tokens) {
+    function calculateTokens(
+        uint256 _amount
+    ) internal view returns (uint256 tokens) {
         tokens = _amount.mul(getConversionRate());
     }
 
@@ -617,12 +659,12 @@ contract BasicFundraiser is HasOwner, AbstractFundraiser {
 // File: contracts/token/StandardMintableToken.sol
 
 contract StandardMintableToken is MintableToken {
-    constructor(address _minter, string _name, string _symbol, uint8 _decimals)
-        StandardToken(_name, _symbol, _decimals)
-        MintableToken(_minter)
-        public
-    {
-    }
+    constructor(
+        address _minter,
+        string _name,
+        string _symbol,
+        uint8 _decimals
+    ) public StandardToken(_name, _symbol, _decimals) MintableToken(_minter) {}
 }
 
 // File: contracts/fundraiser/MintableTokenFundraiser.sol
@@ -638,7 +680,11 @@ contract MintableTokenFundraiser is BasicFundraiser {
      * @param _symbol Token symbol
      * @param _decimals Token decimals
      */
-    function initializeMintableTokenFundraiser(string _name, string _symbol, uint8 _decimals) internal {
+    function initializeMintableTokenFundraiser(
+        string _name,
+        string _symbol,
+        uint8 _decimals
+    ) internal {
         token = new StandardMintableToken(
             address(this), // The fundraiser is the token minter
             _name,
@@ -670,14 +716,16 @@ contract GasPriceLimitFundraiser is HasOwner, BasicFundraiser {
     /**
      * @dev This function puts the initial gas limit
      */
-    function initializeGasPriceLimitFundraiser(uint256 _gasPriceLimit) internal {
+    function initializeGasPriceLimitFundraiser(
+        uint256 _gasPriceLimit
+    ) internal {
         gasPriceLimit = _gasPriceLimit;
     }
 
     /**
      * @dev This function allows the owner to change the gas limit any time during the fundraiser
      */
-    function changeGasPriceLimit(uint256 _gasPriceLimit) onlyOwner() public {
+    function changeGasPriceLimit(uint256 _gasPriceLimit) public onlyOwner {
         gasPriceLimit = _gasPriceLimit;
 
         emit GasPriceLimitChanged(_gasPriceLimit);
@@ -715,61 +763,47 @@ contract ForwardFundsFundraiser is BasicFundraiser {
 /**
  * @title RealDirectToken
  */
- 
+
 contract RealDirectToken is MintableToken, BurnableToken, PausableToken {
-  constructor(address _owner, address _minter)
-    StandardToken(
-      "Real Direct Token",   // Token name
-      "RDT", // Token symbol
-      18  // Token decimals
+    constructor(
+        address _owner,
+        address _minter
     )
-    HasOwner(_owner)
-    MintableToken(_minter)
-    public
-  {
-  }
+        public
+        StandardToken(
+            "Real Direct Token", // Token name
+            "RDT", // Token symbol
+            18 // Token decimals
+        )
+        HasOwner(_owner)
+        MintableToken(_minter)
+    {}
 }
-
-
 
 /**
  * @title RealDirectTokenFundraiser
  */
 
-contract RealDirectTokenFundraiser is MintableTokenFundraiser, ForwardFundsFundraiser, GasPriceLimitFundraiser {
-  
+contract RealDirectTokenFundraiser is
+    MintableTokenFundraiser,
+    ForwardFundsFundraiser,
+    GasPriceLimitFundraiser
+{
+    constructor() public HasOwner(msg.sender) {
+        token = new RealDirectToken(
+            msg.sender, // Owner
+            address(this) // The fundraiser is the minter
+        );
 
-  constructor()
-    HasOwner(msg.sender)
-    public
-  {
-    token = new RealDirectToken(
-      msg.sender,  // Owner
-      address(this)  // The fundraiser is the minter
-    );
+        initializeBasicFundraiser(
+            1534291200, // Start date = 15 Aug 2018 00:00 UTC
+            1544918340, // End date = 15 Dec 2018 23:59 UTC
+            20000, // Conversion rate = 20000 RDT per 1 ether
+            0xEcB3c79EB0A9f539340adE65e8823CE8d248fbad // Beneficiary
+        );
 
-    
-
-    initializeBasicFundraiser(
-      1534291200, // Start date = 15 Aug 2018 00:00 UTC
-      1544918340,  // End date = 15 Dec 2018 23:59 UTC
-      20000, // Conversion rate = 20000 RDT per 1 ether
-      0xEcB3c79EB0A9f539340adE65e8823CE8d248fbad     // Beneficiary
-    );
-
-    
-
-    initializeGasPriceLimitFundraiser(
-        50000000000 // Gas price limit in wei
-    );
-
-    
-
-    
-
-    
-    
-    
-  }
-  
+        initializeGasPriceLimitFundraiser(
+            50000000000 // Gas price limit in wei
+        );
+    }
 }

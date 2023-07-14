@@ -1,62 +1,5 @@
 pragma solidity ^0.4.24;
-/**
- * @title -FoMo-3D v0.7.1
- * ┌┬┐┌─┐┌─┐┌┬┐   ╦╦ ╦╔═╗╔╦╗  ┌─┐┬─┐┌─┐┌─┐┌─┐┌┐┌┌┬┐┌─┐
- *  │ ├┤ ├─┤│││   ║║ ║╚═╗ ║   ├─┘├┬┘├┤ └─┐├┤ │││ │ └─┐
- *  ┴ └─┘┴ ┴┴ ┴  ╚╝╚═╝╚═╝ ╩   ┴  ┴└─└─┘└─┘└─┘┘└┘ ┴ └─┘
- *                                  _____                      _____
- *                                 (, /     /)       /) /)    (, /      /)          /)
- *          ┌─┐                      /   _ (/_      // //       /  _   // _   __  _(/
- *          ├─┤                  ___/___(/_/(__(_/_(/_(/_   ___/__/_)_(/_(_(_/ (_(_(_
- *          ┴ ┴                /   /          .-/ _____   (__ /
- *                            (__ /          (_/ (, /                                      /)™
- *                                                 /  __  __ __ __  _   __ __  _  _/_ _  _(/
- * ┌─┐┬─┐┌─┐┌┬┐┬ ┬┌─┐┌┬┐                          /__/ (_(__(_)/ (_/_)_(_)/ (_(_(_(__(/_(_(_
- * ├─┘├┬┘│ │ │││ ││   │                      (__ /              .-/  © Jekyll Island Inc. 2018
- * ┴  ┴└─└─┘─┴┘└─┘└─┘ ┴                                        (_/   .--,-``-.
- *========,---,.======================____==========================/   /     '.=======,---,====*
- *      ,'  .' |                    ,'  , `.                       / ../        ;    .'  .' `\
- *    ,---.'   |    ,---.        ,-+-,.' _ |    ,---.              \ ``\  .`-    ' ,---.'     \
- *    |   |   .'   '   ,'\    ,-+-. ;   , ||   '   ,'\      ,---,.  \___\/   \   : |   |  .`\  |
- *    :   :  :    /   /   |  ,--.'|'   |  ||  /   /   |   ,'  .' |       \   :   | :   : |  '  |
- *    :   |  |-, .   ; ,. : |   |  ,', |  |, .   ; ,. : ,---.'   |       /  /   /  |   ' '  ;  :
- *    |   :  ;/| '   | |: : |   | /  | |--'  '   | |: : |   |  .'        \  \   \  '   | ;  .  |
- *    |   |   .' '   | .; : |   : |  | ,     '   | .; : :   |.'      ___ /   :   | |   | :  |  '
- *    '   :  '   |   :    | |   : |  |/      |   :    | `---'       /   /\   /   : '   : | /  ;
- *    |   |  |    \   \  /  |   | |`-'        \   \  /             / ,,/  ',-    . |   | '` ,/
- *    |   :  \     `----'   |   ;/             `----'              \ ''\        ;  ;   :  .'
- *====|   | ,'=============='---'==========(long version)===========\   \     .'===|   ,.'======*
- *    `----'                                                         `--`-,,-'     '---'
- *             ╔═╗┌─┐┌─┐┬┌─┐┬┌─┐┬   ┌─────────────────────────┐ ╦ ╦┌─┐┌┐ ╔═╗┬┌┬┐┌─┐ 
- *             ║ ║├┤ ├┤ ││  │├─┤│   │   https://exitscam.me   │ ║║║├┤ ├┴┐╚═╗│ │ ├┤  
- *             ╚═╝└  └  ┴└─┘┴┴ ┴┴─┘ └─┬─────────────────────┬─┘ ╚╩╝└─┘└─┘╚═╝┴ ┴ └─┘ 
- *   ┌────────────────────────────────┘                     └──────────────────────────────┐
- *   │╔═╗┌─┐┬  ┬┌┬┐┬┌┬┐┬ ┬   ╔╦╗┌─┐┌─┐┬┌─┐┌┐┌   ╦┌┐┌┌┬┐┌─┐┬─┐┌─┐┌─┐┌─┐┌─┐   ╔═╗┌┬┐┌─┐┌─┐┬┌─│
- *   │╚═╗│ ││  │ │││ │ └┬┘ ═  ║║├┤ └─┐││ ┬│││ ═ ║│││ │ ├┤ ├┬┘├┤ ├─┤│  ├┤  ═ ╚═╗ │ ├─┤│  ├┴┐│
- *   │╚═╝└─┘┴─┘┴─┴┘┴ ┴  ┴    ═╩╝└─┘└─┘┴└─┘┘└┘   ╩┘└┘ ┴ └─┘┴└─└  ┴ ┴└─┘└─┘   ╚═╝ ┴ ┴ ┴└─┘┴ ┴│
- *   │    ┌──────────┐           ┌───────┐            ┌─────────┐              ┌────────┐  │
- *   └────┤ Inventor ├───────────┤ Justo ├────────────┤ Sumpunk ├──────────────┤ Mantso ├──┘
- *        └──────────┘           └───────┘            └─────────┘              └────────┘
- *   ┌─────────────────────────────────────────────────────────┐ ╔╦╗┬ ┬┌─┐┌┐┌┬┌─┌─┐  ╔╦╗┌─┐
- *   │ ChungkueiBlock, Ambius, Aritz Cracker, Cryptoknight,    │  ║ ├─┤├─┤│││├┴┐└─┐   ║ │ │
- *   │ Capex, JogFera, The Shocker, Daok, Randazzz, PumpRabbi, │  ╩ ┴ ┴┴ ┴┘└┘┴ ┴└─┘   ╩ └─┘
- *   │ Kadaz, Incognito Jo, Lil Stronghands, Ninja Turtle,     └───────────────────────────┐
- *   │ Psaints, Satoshi, Vitalik, Nano 2nd, Bogdanoffs         Isaac Newton, Nikola Tesla, │ 
- *   │ Le Comte De Saint Germain, Albert Einstein, Socrates, & all the volunteer moderator │
- *   │ & support staff, content, creators, autonomous agents, and indie devs for P3D.      │
- *   │              Without your help, we wouldn't have the time to code this.             │
- *   └─────────────────────────────────────────────────────────────────────────────────────┘
- * 
- * This product is protected under license.  Any unauthorized copy, modification, or use without 
- * express written consent from the creators is prohibited.
- * 
- * WARNING:  THIS PRODUCT IS HIGHLY ADDICTIVE.  IF YOU HAVE AN ADDICTIVE NATURE.  DO NOT PLAY.
- */
 
-//==============================================================================
-//     _    _  _ _|_ _  .
-//    (/_\/(/_| | | _\  .
-//==============================================================================
 contract F3Devents {
     // fired whenever a player registers a name
     event onNewName
@@ -229,10 +172,7 @@ contract FoMo3Dlong is modularLong {
 //****************
     mapping (uint256 => F3Ddatasets.TeamFee) public fees_;          // (team => fees) fee distribution by team
     mapping (uint256 => F3Ddatasets.PotSplit) public potSplit_;     // (team => fees) pot split distribution by team
-//==============================================================================
-//     _ _  _  __|_ _    __|_ _  _  .
-//    (_(_)| |_\ | | |_|(_ | (_)|   .  (initial data setup upon contract deploy)
-//==============================================================================
+
     constructor()
         public
     {
@@ -257,10 +197,7 @@ contract FoMo3Dlong is modularLong {
         potSplit_[2] = F3Ddatasets.PotSplit(30,0);  //58% to winner, 10% to next round, 2% to com
         potSplit_[3] = F3Ddatasets.PotSplit(30,0);  //58% to winner, 10% to next round, 2% to com
     }
-//==============================================================================
-//     _ _  _  _|. |`. _  _ _  .
-//    | | |(_)(_||~|~|(/_| _\  .  (these are safety checks)
-//==============================================================================
+
     /**
      * @dev used to make sure no one can interact with contract until it has 
      * been activated. 
@@ -632,30 +569,6 @@ contract FoMo3Dlong is modularLong {
         }
     }
     
-    /**
-     * @dev use these to register names.  they are just wrappers that will send the
-     * registration requests to the PlayerBook contract.  So registering here is the 
-     * same as registering there.  UI will always display the last name you registered.
-     * but you will still own all previously registered names to use as affiliate 
-     * links.
-     * - must pay a registration fee.
-     * - name must be unique
-     * - names will be converted to lowercase
-     * - name cannot start or end with a space 
-     * - cannot have more than 1 space in a row
-     * - cannot be only numbers
-     * - cannot start with 0x 
-     * - name must be at least 1 char
-     * - max length of 32 characters long
-     * - allowed characters: a-z, 0-9, and space
-     * -functionhash- 0x921dec21 (using ID for affiliate)
-     * -functionhash- 0x3ddd4698 (using address for affiliate)
-     * -functionhash- 0x685ffd83 (using name for affiliate)
-     * @param _nameString players desired name
-     * @param _affCode affiliate ID, address, or name of who referred you
-     * @param _all set to true if you want this to push your info to all games 
-     * (this might cost a lot of gas)
-     */
     function registerNameXID(string _nameString, uint256 _affCode, bool _all)
         isHuman()
         public
@@ -703,10 +616,7 @@ contract FoMo3Dlong is modularLong {
         // fire event
         emit F3Devents.onNewName(_pID, _addr, _name, _isNewPlayer, _affID, plyr_[_affID].addr, plyr_[_affID].name, _paid, now);
     }
-//==============================================================================
-//     _  _ _|__|_ _  _ _  .
-//    (_|(/_ |  | (/_| _\  . (for UI & viewing things on etherscan)
-//=====_|=======================================================================
+
     /**
      * @dev return the price buyer will pay for next 1 individual key.
      * -functionhash- 0x018a25e8
@@ -899,10 +809,6 @@ contract FoMo3Dlong is modularLong {
         );
     }
 
-//==============================================================================
-//     _ _  _ _   | _  _ . _  .
-//    (_(_)| (/_  |(_)(_||(_  . (this + tools + calcs + modules = our softwares engine)
-//=====================_|=======================================================
     /**
      * @dev logic runs whenever a buy order is executed.  determines how to handle 
      * incoming eth depending on if we are in an active round or not
@@ -1019,15 +925,6 @@ contract FoMo3Dlong is modularLong {
         if (plyrRnds_[_pID][_rID].keys == 0)
             _eventData_ = managePlayer(_pID, _eventData_);
         
-        // early round eth limiter 
-        // 当一轮刚开始时，合约收到的总ETH数小于100且某用户累计充值超过1ETH的时候，将不再能买到keys，你多余钱会直接计入你的收益
-        // if (round_[_rID].eth < 1000000000000000000 && plyrRnds_[_pID][_rID].eth.add(_eth) > 1000000000000000000)
-        // {
-        //     uint256 _availableLimit = (1000000000000000000).sub(plyrRnds_[_pID][_rID].eth);
-        //     uint256 _refund = _eth.sub(_availableLimit);
-        //     plyr_[_pID].gen = plyr_[_pID].gen.add(_refund);
-        //     _eth = _availableLimit;
-        // }
         
         // if eth left is greater than min eth allowed (sorry no pocket lint)
         if (_eth > 1000000000) 
@@ -1124,10 +1021,7 @@ contract FoMo3Dlong is modularLong {
             endTx(_pID, _team, _eth, _keys, _eventData_);
         }
     }
-//==============================================================================
-//     _ _ | _   | _ _|_ _  _ _  .
-//    (_(_||(_|_||(_| | (_)| _\  .
-//==============================================================================
+
     /**
      * @dev calculates unmasked earnings (just calculates, does not update mask)
      * @return earnings in wei format
@@ -1185,10 +1079,7 @@ contract FoMo3Dlong is modularLong {
         else // rounds over.  need price for new round
             return ( (_keys).eth() );
     }
-//==============================================================================
-//    _|_ _  _ | _  .
-//     | (_)(_)|_\  .
-//==============================================================================
+
     /**
 	 * @dev receives name/player info from names contract 
      */
@@ -1332,18 +1223,6 @@ contract FoMo3Dlong is modularLong {
         // pay our winner
         plyr_[_winPID].win = _win.add(plyr_[_winPID].win);
         
-        // community rewards
-        // if (!address(Jekyll_Island_Inc).call.value(_com)(bytes4(keccak256("deposit()"))))
-        // {
-        //     // This ensures Team Just cannot influence the outcome of FoMo3D with
-        //     // bank migrations by breaking outgoing transactions.
-        //     // Something we would never do. But that's not the point.
-        //     // We spent 2000$ in eth re-deploying just to patch this, we hold the 
-        //     // highest belief that everything we create should be trustless.
-        //     // Team JUST, The name you shouldn't have to trust.
-        //     _p3d = _p3d.add(_com);
-        //     _com = 0;
-        // }
 
         _p3d = _p3d.add(_com);
         
@@ -1450,17 +1329,7 @@ contract FoMo3Dlong is modularLong {
         // pay 2% out to community rewards
         uint256 _com = _eth / 50;
         uint256 _p3d;
-        // if (!address(Jekyll_Island_Inc).call.value(_com)(bytes4(keccak256("deposit()"))))
-        // {
-        //     // This ensures Team Just cannot influence the outcome of FoMo3D with
-        //     // bank migrations by breaking outgoing transactions.
-        //     // Something we would never do. But that's not the point.
-        //     // We spent 2000$ in eth re-deploying just to patch this, we hold the 
-        //     // highest belief that everything we create should be trustless.
-        //     // Team JUST, The name you shouldn't have to trust.
-        //     _p3d = _com;
-        //     _com = 0;
-        // }
+        
         _p3d = _p3d.add(_com);
 
         // pay 1% out to FoMo3D short
@@ -1559,16 +1428,6 @@ contract FoMo3Dlong is modularLong {
         private
         returns(uint256)
     {
-        /* MASKING NOTES
-            earnings masks are a tricky thing for people to wrap their minds around.
-            the basic thing to understand here.  is were going to have a global
-            tracker based on profit per share for each round, that increases in
-            relevant proportion to the increase in share supply.
-            
-            the player will have an additional mask that basically says "based
-            on the rounds mask, my shares, and how much i've already withdrawn,
-            how much is still owed to me?"
-        */
         
         // calc profit per key & round mask based on this buy:  (dust goes to pot)
         uint256 _ppt = (_gen.mul(1000000000000000000)) / (round_[_rID].keys);
@@ -1633,13 +1492,7 @@ contract FoMo3Dlong is modularLong {
             airDropPot_
         );
     }
-//==============================================================================
-//    (~ _  _    _._|_    .
-//    _)(/_(_|_|| | | \/  .
-//====================/=========================================================
-    /** upon contract deploy, it will be deactivated.  this is a one time
-     * use function that will activate the contract.  we do this so devs 
-     * have time to set things up on the web end                            **/
+                        
     bool public activated_ = false;
     function activate()
         public
@@ -1686,30 +1539,8 @@ contract FoMo3Dlong is modularLong {
     }
 }
 
-//==============================================================================
-//   __|_ _    __|_ _  .
-//  _\ | | |_|(_ | _\  .
-//==============================================================================
 library F3Ddatasets {
-    //compressedData key
-    // [76-33][32][31][30][29][28-18][17][16-6][5-3][2][1][0]
-        // 0 - new player (bool)
-        // 1 - joined round (bool)
-        // 2 - new  leader (bool)
-        // 3-5 - air drop tracker (uint 0-999)
-        // 6-16 - round end time
-        // 17 - winnerTeam
-        // 18 - 28 timestamp 
-        // 29 - team
-        // 30 - 0 = reinvest (round), 1 = buy (round), 2 = buy (ico), 3 = reinvest (ico)
-        // 31 - airdrop happened bool
-        // 32 - airdrop tier 
-        // 33 - airdrop amount won
-    //compressedIDs key
-    // [77-52][51-26][25-0]
-        // 0-25 - pID 
-        // 26-51 - winPID
-        // 52-77 - rID
+    
     struct EventReturns {
         uint256 compressedData;
         uint256 compressedIDs;
@@ -1760,10 +1591,6 @@ library F3Ddatasets {
     }
 }
 
-//==============================================================================
-//  |  _      _ _ | _  .
-//  |<(/_\/  (_(_||(_  .
-//=======/======================================================================
 library F3DKeysCalcLong {
     using SafeMath for *;
     /**
@@ -1821,10 +1648,6 @@ library F3DKeysCalcLong {
     }
 }
 
-//==============================================================================
-//  . _ _|_ _  _ |` _  _ _  _  .
-//  || | | (/_| ~|~(_|(_(/__\  .
-//==============================================================================
 interface otherFoMo3D {
     function potSwap() external payable;
 }
@@ -1859,30 +1682,6 @@ interface PlayerBookInterface {
     function registerNameXaddrFromDapp(address _addr, bytes32 _name, address _affCode, bool _all) external payable returns(bool, uint256);
     function registerNameXnameFromDapp(address _addr, bytes32 _name, bytes32 _affCode, bool _all) external payable returns(bool, uint256);
 }
-
-/**
-* @title -Name Filter- v0.1.9
-* ┌┬┐┌─┐┌─┐┌┬┐   ╦╦ ╦╔═╗╔╦╗  ┌─┐┬─┐┌─┐┌─┐┌─┐┌┐┌┌┬┐┌─┐
-*  │ ├┤ ├─┤│││   ║║ ║╚═╗ ║   ├─┘├┬┘├┤ └─┐├┤ │││ │ └─┐
-*  ┴ └─┘┴ ┴┴ ┴  ╚╝╚═╝╚═╝ ╩   ┴  ┴└─└─┘└─┘└─┘┘└┘ ┴ └─┘
-*                                  _____                      _____
-*                                 (, /     /)       /) /)    (, /      /)          /)
-*          ┌─┐                      /   _ (/_      // //       /  _   // _   __  _(/
-*          ├─┤                  ___/___(/_/(__(_/_(/_(/_   ___/__/_)_(/_(_(_/ (_(_(_
-*          ┴ ┴                /   /          .-/ _____   (__ /                               
-*                            (__ /          (_/ (, /                                      /)™ 
-*                                                 /  __  __ __ __  _   __ __  _  _/_ _  _(/
-* ┌─┐┬─┐┌─┐┌┬┐┬ ┬┌─┐┌┬┐                          /__/ (_(__(_)/ (_/_)_(_)/ (_(_(_(__(/_(_(_
-* ├─┘├┬┘│ │ │││ ││   │                      (__ /              .-/  © Jekyll Island Inc. 2018
-* ┴  ┴└─└─┘─┴┘└─┘└─┘ ┴                                        (_/
-*              _       __    _      ____      ____  _   _    _____  ____  ___  
-*=============| |\ |  / /\  | |\/| | |_ =====| |_  | | | |    | |  | |_  | |_)==============*
-*=============|_| \| /_/--\ |_|  | |_|__=====|_|   |_| |_|__  |_|  |_|__ |_| \==============*
-*
-* ╔═╗┌─┐┌┐┌┌┬┐┬─┐┌─┐┌─┐┌┬┐  ╔═╗┌─┐┌┬┐┌─┐ ┌──────────┐
-* ║  │ ││││ │ ├┬┘├─┤│   │   ║  │ │ ││├┤  │ Inventor │
-* ╚═╝└─┘┘└┘ ┴ ┴└─┴ ┴└─┘ ┴   ╚═╝└─┘─┴┘└─┘ └──────────┘
-*/
 
 library NameFilter {
     /**
